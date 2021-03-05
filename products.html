@@ -1,0 +1,121 @@
+<html>
+<head>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script>
+$(document).ready(function(){
+	//	$("#view").click(function(){
+			$.ajax({
+			type: 'get',
+			url: "https://search.unbxd.io/fb853e3332f2645fac9d71dc63e09ec1/demo-unbxd700181503576558/search?&q=*&rows=10&start=0", 
+			dataType: 'json',
+			 
+			success: function(data,status){
+					var products = data.response.products;
+					
+				 //	console.log(products.length);
+					var productarray = [];
+					for(var i = 0; i < products.length;i++){
+					
+					Object.keys(products[i]).forEach(key =>
+						{
+							var finalArray = [];
+							
+							var val =  products[i][key];
+							//console.log(key,products[key]);
+							
+							var typeval = typeof val;
+							//	console.log(typeval);
+								
+							if(typeval == "object") /* only array values */
+							{
+							
+								var nodup = removedup(val); /* removed duplicates */
+							//	console.log(key);
+								if(key == "unbxd_color_for_category") /*  unbxd_color_for_category to take color value only */
+								{
+								
+									for(var m = 0; m< nodup.length ; m++){
+									var splitarray = nodup[m].split("::");
+									//	console.log(splitarray);
+										nodup[m] = splitarray[1];
+									}
+								  }
+								
+								
+								for(var c = 0; c< nodup.length ; c++){
+								 if(typeval == "string"){
+										if(nodup[c].toUpperCase() === "FALSE"){
+											nodup[c] = "NO";
+											}
+										else if(nodup[c].toUpperCase() === "TRUE"){
+											nodup[c] = "YES";
+										}
+									}
+								  }
+								
+								var productString = nodup.toString();
+								// console.log(nodup);
+								 finalArray.push(productString);
+							}
+							
+							else
+							{
+							   //console.log(typeval);
+							   if(typeval == "string"){
+									if(val.toUpperCase() == "FALSE"){
+											val = "NO";
+										}
+									else if(val.toUpperCase() == "TRUE"){
+											val = "YES";
+										}
+									
+								}
+								finalArray.push(val);
+								
+							}
+							productarray.push(finalArray);
+						
+						});
+						
+						
+						console.log(productarray);
+						var csvstr = productarray.toString();
+						console.log(csvstr);
+						
+					$("#res").html(csvstr);
+						}
+				},
+			 error: function (xhr, desc, err)
+				{
+					$("#res").html(err);
+				}
+			});
+		//});
+	});
+	
+	function removedup(array)
+	{
+	var noduparr = [];
+	
+	//loop through array values
+	
+	for(i=0; i < array.length; i++)
+	{
+	if(noduparr.indexOf(array[i])=== -1)
+	{
+	noduparr.push(array[i]);
+	}
+	}
+	return noduparr;
+	}
+
+
+</script>
+</head>
+<body>
+<div id = "res">
+
+</div>
+
+</body>
+</html>
